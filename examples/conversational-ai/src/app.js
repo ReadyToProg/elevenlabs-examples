@@ -299,3 +299,36 @@ function debugHistory() {
     console.log('Розмір в localStorage:', new Blob([localStorage.getItem('chatHistory')]).size, 'байт');
     console.groupEnd();
 }
+
+// Додайте цю функцію до існуючого коду
+function updateAISpeakingState(isSpeaking) {
+    const mainContent = document.querySelector('.main-content');
+    const messagesWrapper = document.querySelector('.messages-wrapper');
+    
+    if (isSpeaking) {
+        mainContent.classList.add('ai-speaking');
+        messagesWrapper.classList.add('ai-speaking');
+    } else {
+        mainContent.classList.remove('ai-speaking');
+        messagesWrapper.classList.remove('ai-speaking');
+    }
+}
+
+// Викликайте цю функцію при зміні стану розмови
+// Наприклад, в onModeChange:
+onModeChange: (mode) => {
+    switch(mode) {
+        case 'speaking':
+            updateStatus(STATUS.SPEAKING);
+            updateAISpeakingState(true);
+            break;
+        case 'listening':
+            updateStatus(STATUS.LISTENING);
+            updateAISpeakingState(false);
+            break;
+        case 'disconnected':
+            updateStatus(STATUS.DISCONNECTED);
+            updateAISpeakingState(false);
+            break;
+    }
+}

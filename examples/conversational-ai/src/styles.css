@@ -1,3 +1,11 @@
+:root {
+    --brand-gradient-start: #6366f1;
+    --brand-gradient-end: #8b5cf6;
+    --brand-primary: #6366f1;
+    --brand-secondary: #8b5cf6;
+    --glow-size: 20px;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -11,14 +19,17 @@ body {
     margin: 0;
     padding: 20px;
     display: flex;
-    gap: 20px;
+    gap: 30px;
+    background: none;
 }
 
 .main-content {
     flex: 2;
     padding: 0;
-    background: none;
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 30px;
 }
 
 h1 {
@@ -37,6 +48,7 @@ h1 {
     background: #000;
     border-radius: 0;
     overflow: hidden;
+    margin: 30px;
 }
 
 .avatar-video {
@@ -47,7 +59,7 @@ h1 {
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.4s ease-in-out;
 }
 
 .avatar-video.active {
@@ -114,8 +126,9 @@ h1 {
     height: 16px;
     border-radius: 50%;
     background-color: #ef4444;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 10;
 }
 
 .status-dot.connected {
@@ -128,13 +141,13 @@ h1 {
 
 /* Контейнер повідомлень */
 .messages-wrapper {
-    width: 470px;
+    width: 400px;
     height: 600px;
     position: sticky;
     top: 20px;
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -145,23 +158,24 @@ h1 {
     position: relative;
     overflow-y: auto;
     padding: 10px;
-    margin-right: -10px;
 }
 
 .messages-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 15px;
     padding-right: 10px;
 }
 
 .message {
-    padding: 15px 20px;
-    border-radius: 20px;
-    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    max-width: 80%;
     position: relative;
     animation: messageAppear 0.3s ease-out;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    font-size: 0.95em;
+    line-height: 1.4;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes messageAppear {
@@ -176,49 +190,60 @@ h1 {
 }
 
 .message.user {
-    align-self: flex-end;
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     color: white;
-    margin-left: 20%;
+    margin-left: 15%;
+    border-bottom-right-radius: 4px;
 }
 
 .message.assistant {
-    align-self: flex-start;
     background: white;
     color: #2c3e50;
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    margin-right: 20%;
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    margin-right: 15%;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .message-time {
     font-size: 0.7em;
-    opacity: 0.7;
-    margin-top: 5px;
+    opacity: 0.6;
+    margin-top: 4px;
     text-align: right;
 }
 
 /* Кнопки керування */
 .controls {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: center;
     gap: 20px;
     padding: 20px 0;
     margin-top: 20px;
+    background: transparent !important;
 }
 
 .control-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px 30px;
+    padding: 12px 28px;
     border-radius: 50px;
     border: none;
     cursor: pointer;
-    font-size: 1.1em;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.control-button.start {
+    background: #6366f1;
+    color: white;
+}
+
+.control-button.end {
+    background: #f87171;
+    color: white;
 }
 
 /* Кнопка початку розмови */
@@ -354,9 +379,26 @@ h1 {
     background: rgba(99, 102, 241, 0.1);
     border-radius: 10px;
     animation: notificationAppear 0.3s ease-out;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.85em;
+    color: #6366f1;
+    animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes notificationAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(-10px);
@@ -526,7 +568,7 @@ h1 {
     font-weight: 800;
 }
 
-/* Анімація пульсації д��я іконок */
+/* Анімація пульсації дя іконок */
 @keyframes pulse {
     0% {
         transform: scale(1);
@@ -739,7 +781,7 @@ h1 {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .avatar-video.fade-out {
@@ -820,7 +862,7 @@ h1 {
     height: 16px;
     border-radius: 50%;
     background-color: #ef4444;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
     z-index: 10;
 }
@@ -844,4 +886,166 @@ h1 {
         position: static;
         margin-top: 20px;
     }
+}
+
+/* Стилізуємо скролбар */
+.messages-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: 2px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.3);
+}
+
+/* Анімація пульсації для активного стану */
+@keyframes glow-pulse {
+    0% {
+        opacity: 0.15;
+        filter: blur(8px);
+    }
+    50% {
+        opacity: 0.3;
+        filter: blur(12px);
+    }
+    100% {
+        opacity: 0.15;
+        filter: blur(8px);
+    }
+}
+
+/* Клас для активного стану (коли АІ говорить) */
+.ai-speaking::before {
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Покращуємо тіні для більшого об'єму */
+.main-content, .messages-wrapper {
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 0 30px rgba(99, 102, 241, 0.1);
+}
+
+/* Додаємо плавність для всіх переходів */
+.main-content::before, 
+.messages-wrapper::before {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Покращуємо контраст для тексту */
+.message {
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Додаємо неонове світіння для блоків */
+.main-content, .messages-wrapper {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+}
+
+/* Створюємо неоновий ефект */
+.main-content::before, .messages-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: linear-gradient(
+        45deg,
+        var(--brand-primary),
+        var(--brand-secondary),
+        var(--brand-primary),
+        var(--brand-secondary)
+    );
+    border-radius: 40px;
+    z-index: -1;
+    filter: blur(var(--glow-size));
+    opacity: 0.15;
+}
+
+/* Посилена анімація пульсації */
+@keyframes neonPulse {
+    0% {
+        filter: blur(var(--glow-size));
+        opacity: 0.15;
+    }
+    50% {
+        filter: blur(calc(var(--glow-size) * 1.5));
+        opacity: 0.3;
+    }
+    100% {
+        filter: blur(var(--glow-size));
+        opacity: 0.15;
+    }
+}
+
+/* Активний стан з посиленим ефектом */
+.ai-speaking::before {
+    --glow-size: 40px;
+    animation: 
+        neonPulse 1.5s ease-in-out infinite,
+        gradientMove 6s linear infinite;
+    opacity: 0.3;
+}
+
+/* Посилюємо тіні */
+.main-content, .messages-wrapper {
+    box-shadow: 
+        0 4px 40px rgba(0, 0, 0, 0.1),
+        0 0 60px rgba(99, 102, 241, 0.3);
+}
+
+/* Анімація руху градієнта */
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Застосовуємо анімацію градієнта */
+.main-content::before, .messages-wrapper::before {
+    background-size: 300% 300%;
+    animation: gradientMove 8s linear infinite;
+}
+
+/* Прибираємо всі before елементи зі світінням */
+.main-content::before,
+.messages-wrapper::before {
+    display: none;
+}
+
+/* Прибираємо всі анімації світіння */
+.ai-speaking::before {
+    animation: none;
+}
+
+/* Базові стилі для кнопок без білого фону */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 0;
+    background: none;
+    box-shadow: none;
+    border: none;
+}
+
+.controls::before,
+.controls::after {
+    display: none;
 }
