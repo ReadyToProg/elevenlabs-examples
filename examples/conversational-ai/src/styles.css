@@ -35,6 +35,17 @@ body {
     border-radius: 20px !important;
     display: flex !important;
     flex-direction: column !important;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3) !important;
+}
+
+.main-content::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: -2px !important;
+    background: linear-gradient(45deg, #6366F1, #60A5FA, #67E8F9) !important;
+    border-radius: 22px !important;
+    z-index: -1 !important;
+    opacity: 0.7 !important;
 }
 
 .content-wrapper {
@@ -243,17 +254,17 @@ h1 {
 
 /* Кнопки керування */
 .controls {
-    position: absolute !important;
+    position: fixed !important;
     bottom: 20px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     display: flex !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 12px !important;
     padding: 0 !important;
     margin: 0 !important;
     background: none !important;
-    z-index: 2 !important;
+    z-index: 1000 !important;
     width: auto !important;
 }
 
@@ -263,7 +274,7 @@ h1 {
 }
 
 .control-button {
-    padding: 12px 24px !important;
+    padding: 12px 28px !important;
     border-radius: 50px !important;
     border: none !important;
     cursor: pointer !important;
@@ -273,7 +284,7 @@ h1 {
     gap: 8px !important;
     transition: all 0.2s ease !important;
     font-size: 15px !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
 .control-button.start {
@@ -287,15 +298,15 @@ h1 {
 }
 
 .control-button.start:hover:not(:disabled) {
-    background: #4f46e5;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    background: #4f46e5 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3) !important;
 }
 
 .control-button.end:hover:not(:disabled) {
-    background: #ef4444;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    background: #ef4444 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3) !important;
 }
 
 .control-button:disabled {
