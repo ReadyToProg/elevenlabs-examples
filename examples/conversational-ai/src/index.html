@@ -19,33 +19,25 @@
                         <span class="product-name">dopomog<span class="highlight-i">ai</span></span>
                     </div>
                     <div class="product-info">
-                        <p class="product-tagline">AI Leader and influencer of Social Impact</p>
-                        <p class="product-description">Advanced AI ecosystem for global change</p>
+                        <p class="product-tagline">A dedicated AI influencer for social impact</p>
+                        <p class="product-description">Building a social network where every interaction matters</p>
                     </div>
                 </div>
-                <div class="avatar-container">
-                    <div class="avatar-wrapper">
-                        <div class="avatar">
-                            <video 
-                                class="avatar-video" 
-                                loop 
-                                muted 
-                                playsinline 
-                                autoplay
-                            >
-                                <source src="/idle-video.mp4" type="video/mp4">
+                <div class="avatar-wrapper">
+                    <div class="avatar">
+                        <div class="avatar-container">
+                            <video class="avatar-video disconnected-video" muted playsinline loop>
+                                <source src="public/videos/idle.mp4" type="video/mp4">
                             </video>
-                            <div class="avatar-rings">
-                                <div class="ring ring1"></div>
-                                <div class="ring ring2"></div>
-                                <div class="ring ring3"></div>
-                            </div>
+                            <video class="avatar-video listening-video" muted playsinline loop>
+                                <source src="public/videos/listening.mp4" type="video/mp4">
+                            </video>
+                            <video class="avatar-video speaking-video" muted playsinline loop>
+                                <source src="public/videos/speaking.mp4" type="video/mp4">
+                            </video>
                         </div>
-                        <div class="connection-status">
-                            <div id="connectionStatus" class="status-dot"></div>
-                        </div>
+                        <div class="status-dot"></div>
                     </div>
-                    <div id="speakingStatus" class="speaking-status"></div>
                 </div>
                 
             </div>
@@ -76,86 +68,7 @@
             
         </div>
     </div>
-    <!--
-    <footer class="footer">
-        <div class="products-grid">
-            <div class="products-left">
-                <!-- Dopomogahub
-                <div class="product-card" data-product="dopomogahub">
-                    <div class="product-minimal">
-                        <svg class="product-icon" width="16" height="16" viewBox="0 0 16 16">
-                            <circle cx="8" cy="8" r="6" class="icon-circle"></circle>
-                        </svg>
-                        <span class="product-name">dopomoga<span class="highlight-hub">hub</span></span>
-                    </div>
-                    <div class="product-expanded">
-                        <div class="product-info">
-                            <p class="product-tagline">Unite · Empower · Transform</p> <br>
-                            <p class="product-description">AI-powered ecosystem for impact</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Prozbory 
-                <div class="product-card" data-product="prozbory">
-                    <div class="product-minimal">
-                        <svg class="product-icon" width="16" height="16" viewBox="0 0 16 16">
-                            <circle cx="8" cy="8" r="6" class="icon-circle"></circle>
-                        </svg>
-                        <span class="product-name">prozbory</span>
-                    </div>
-                    <div class="product-expanded">
-                        <div class="product-info">
-                            <p class="product-tagline">Prozbory Tagline</p>
-                            <p class="product-description">Prozbory description</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="products-left">
-                <!-- Volunteerhub
-                <div class="product-card" data-product="volunteerhub">
-                    <div class="product-minimal">
-                        <svg class="product-icon" width="16" height="16" viewBox="0 0 16 16">
-                            <circle cx="8" cy="8" r="6" class="icon-circle"></circle>
-                        </svg>
-                        <span class="product-name">volunteerhub</span>
-                    </div>
-                    <div class="product-expanded">
-                        <div class="product-info">
-                            <p class="product-tagline">Volunteerhub Tagline</p>
-                            <p class="product-description">Volunteerhub description</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Dooop 
-                <div class="product-card video-card" data-product="dooop">
-                    <div class="product-minimal">
-                        <video 
-                            class="product-video" 
-                            loop 
-                            muted 
-                            playsinline 
-                            autoplay
-                        >
-                            <source src="/idle-video.mp4" type="video/mp4">
-                        </video>
-                        <span class="product-name">dooop</span>
-      
-                    </div>
-                    <div class="product-expanded">
-                        <div class="product-info">
-                            <p class="product-tagline">Dooop Tagline</p>
-                            <p class="product-description">Dooop description</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    -->
+    <!-- Змінюємо підключення скриптів -->
     <script src="bundle.js"></script>
-</body>
-</html>
 </body>
 </html>

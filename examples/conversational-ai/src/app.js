@@ -18,8 +18,15 @@ const MESSAGES = {
 // Додаємо новий тип статусу
 const STATUS = {
     DISCONNECTED: 'disconnected',
-    LISTENING: 'connected',
+    LISTENING: 'listening',
     SPEAKING: 'speaking'
+};
+
+// Додаємо шляхи до відео
+const VIDEOS = {
+    [STATUS.DISCONNECTED]: '/public/videos/idle.mp4',
+    [STATUS.LISTENING]: '/public/videos/listening.mp4',
+    [STATUS.SPEAKING]: '/public/videos/speaking.mp4'
 };
 
 class ChatMessage {
@@ -61,9 +68,11 @@ function updateStatus(status) {
     const statusDot = document.querySelector('.status-dot');
     const avatar = document.querySelector('.avatar');
     
-    // Спочатку видаляємо всі класи статусу
     statusDot.classList.remove('connected', 'speaking');
     avatar.classList.remove('speaking');
+    
+    // Перемикаємо відео
+    window.switchAvatarVideo(status);
     
     switch(status) {
         case STATUS.LISTENING:
@@ -75,7 +84,6 @@ function updateStatus(status) {
             break;
         case STATUS.DISCONNECTED:
         default:
-            // Червоний статус за замовчуванням
             break;
     }
 }
@@ -280,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     endButton.addEventListener('click', async () => await endConversation());
     
     loadHistoryFromStorage();
+    updateStatus(STATUS.DISCONNECTED);
 });
 
 // Додаємо функцію для тестування

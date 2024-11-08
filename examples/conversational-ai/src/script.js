@@ -1,45 +1,69 @@
+window.VideoController = {
+    initialized: false,
+    
+    init() {
+        const videos = {
+            disconnected: document.querySelector('.disconnected-video'),
+            listening: document.querySelector('.listening-video'),
+            speaking: document.querySelector('.speaking-video')
+        };
+        
+        // Налаштовуємо всі відео
+        Object.values(videos).forEach(video => {
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            video.play().catch(err => console.log('Автоплей відкладено до взаємодії'));
+        });
+        
+        // Функція для перемикання відео
+        this.switchVideo = (status) => {
+            console.log('Перемикання відео на статус:', status);
+            // Приховуємо всі відео
+            Object.values(videos).forEach(video => {
+                video.classList.remove('active');
+            });
+            
+            // Показуємо потрібне відео
+            switch(status) {
+                case 'disconnected':
+                    videos.disconnected.classList.add('active');
+                    break;
+                case 'listening':
+                    videos.listening.classList.add('active');
+                    break;
+                case 'speaking':
+                    videos.speaking.classList.add('active');
+                    break;
+            }
+        };
+        
+        this.initialized = true;
+        console.log('VideoController ініціалізовано');
+        
+        // Встановлюємо початковий стан
+        this.switchVideo('disconnected');
+    }
+};
+
+// Ініціалізуємо контролер при завантаженні сторінки
 document.addEventListener('DOMContentLoaded', () => {
-    const avatarVideo = document.querySelector('.avatar-video');
+    window.VideoController.init();
     
-    // Переконаємося, що відео завантажилось
-    avatarVideo.addEventListener('loadedmetadata', () => {
-        console.log('Відео завантажено, починаємо відтворення');
-        
-        // Встановлюємо необхідні атрибути
-        avatarVideo.loop = true;
-        avatarVideo.muted = true;
-        avatarVideo.playsInline = true;
-        
-        // Намагаємося відтворити відео
-        const playPromise = avatarVideo.play();
-        
-        if (playPromise !== undefined) {
-            playPromise
-                .then(() => {
-                    console.log('Відтворення почалось успішно');
-                })
-                .catch(error => {
-                    console.error('Помилка відтворення:', error);
-                    // Спробуємо відтворити при взаємодії користувача
-                    document.addEventListener('click', () => {
-                        avatarVideo.play();
-                    }, { once: true });
-                });
-        }
-    });
-    
-    // Додаємо обробники помилок
-    avatarVideo.addEventListener('error', (e) => {
-        console.error('Помилка відео:', e);
-    });
-    
-    avatarVideo.addEventListener('stalled', () => {
-        console.log('Відтворення призупинено');
-        avatarVideo.play();
-    });
-    
-    avatarVideo.addEventListener('pause', () => {
-        console.log('Відео на паузі, відновлюємо');
-        avatarVideo.play();
-    });
-}); 
+    // Додаємо обробник кліку для початку відтворення на мобільних
+    document.addEventListener('click', () => {
+        const videos = document.querySelectorAll('.avatar-video');
+        videos.forEach(video => {
+            video.play().catch(err => console.log('Помилка відтворення'));
+        });
+    }, { once: true });
+});
+
+// Створюємо глобальну функцію для сумісності
+window.switchAvatarVideo = (status) => {
+    if (window.VideoController.initialized) {
+        window.VideoController.switchVideo(status);
+    } else {
+        console.warn('VideoController ще не ініціалізовано');
+    }
+}; 
