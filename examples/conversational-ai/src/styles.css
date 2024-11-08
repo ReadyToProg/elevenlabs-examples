@@ -17,7 +17,7 @@ body {
 .container {
     max-width: 100%;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     display: flex;
     gap: 30px;
     background: none;
@@ -25,30 +25,59 @@ body {
 
 .main-content {
     flex: 2;
+    margin: 0;
     padding: 0;
-    background: rgba(255, 255, 255, 0.95);
+    background: none;
     border-radius: 20px;
-    margin-bottom: 20px;
-    padding-bottom: 30px;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrapper {
+    background: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.content-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: linear-gradient(
+        45deg,
+        var(--brand-primary),
+        var(--brand-secondary),
+        var(--brand-primary),
+        var(--brand-secondary)
+    );
+    border-radius: 40px;
+    z-index: -1;
+    filter: blur(var(--glow-size));
+    opacity: 0.15;
 }
 
 h1 {
     text-align: center;
     color: #2c3e50;
     font-weight: 600;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     font-size: 2.5em;
+    position: relative;
+    z-index: 1;
 }
 
 /* Аватар та анімації */
 .avatar-container {
     position: relative;
-    width: 100%;
-    height: 600px;
+    width: calc(100% - 10px) !important;
+    height: 600px !important;
     background: #000;
-    border-radius: 0;
+    border-radius: 20px;
     overflow: hidden;
-    margin: 30px;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .avatar-video {
@@ -214,36 +243,75 @@ h1 {
 
 /* Кнопки керування */
 .controls {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px 0;
-    margin-top: 20px;
-    background: transparent !important;
+    position: absolute !important;
+    bottom: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    z-index: 2 !important;
+    width: auto !important;
+}
+
+.controls::before,
+.controls::after {
+    display: none;
 }
 
 .control-button {
-    padding: 12px 28px;
-    border-radius: 50px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
+    padding: 12px 24px !important;
+    border-radius: 50px !important;
+    border: none !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+    font-size: 15px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .control-button.start {
-    background: #6366f1;
-    color: white;
+    background: #6366f1 !important;
+    color: white !important;
 }
 
 .control-button.end {
-    background: #f87171;
-    color: white;
+    background: #f87171 !important;
+    color: white !important;
+}
+
+.control-button.start:hover:not(:disabled) {
+    background: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.control-button.end:hover:not(:disabled) {
+    background: #ef4444;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.control-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.control-button i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.control-button:hover i {
+    transform: scale(1.1);
 }
 
 /* Кнопка початку розмови */
@@ -409,7 +477,7 @@ h1 {
     }
 }
 
-/* Автоскрол для нових повідомлень */
+/* Автоскопрл для нових повідомлень */
 .messages-container {
     scroll-behavior: smooth;
 }
@@ -483,7 +551,7 @@ h1 {
 .product-logo {
     display: flex;
     align-items: center;
-    font-size: 1.5em;
+    font-size: 2.1em;
     font-weight: 800;
 }
 
@@ -584,7 +652,7 @@ h1 {
     }
 }
 
-/* Покращення відступів для мобільних пристроїв */
+/* Покращення відступів для мобільних присроїв */
 @media (max-width: 768px) {
     .products-grid {
         grid-template-columns: 1fr;
@@ -769,7 +837,7 @@ h1 {
     padding-top: 120px; /* Висота відео */
 }
 
-/* Додаємо стилі для контейнера з відео */
+/* Додаємо тилі для контейнера з відео */
 .avatar-container {
     position: relative;
     width: 100%;
@@ -849,7 +917,7 @@ h1 {
     opacity: 1;
 }
 
-/* Показуємо відео disconnected за замовчуванням */
+/* Показуємо відео disconnected за заовчуванням */
 .avatar-video.disconnected-video {
     opacity: 1;
 }
@@ -908,6 +976,7 @@ h1 {
     background: rgba(99, 102, 241, 0.3);
 }
 
+/* ============= GLOW EFFECTS ============= */
 /* Анімація пульсації для активного стану */
 @keyframes glow-pulse {
     0% {
@@ -942,18 +1011,6 @@ h1 {
     transition: all 0.3s ease-in-out;
 }
 
-/* Покращуємо контраст для тексту */
-.message {
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-/* Додаємо неонове світіння для блоків */
-.main-content, .messages-wrapper {
-    position: relative;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-}
-
 /* Створюємо неоновий ефект */
 .main-content::before, .messages-wrapper::before {
     content: '';
@@ -970,6 +1027,7 @@ h1 {
     z-index: -1;
     filter: blur(var(--glow-size));
     opacity: 0.15;
+    bottom: calc(20px + 80px);
 }
 
 /* Посилена анімація пульсації */
@@ -997,13 +1055,6 @@ h1 {
     opacity: 0.3;
 }
 
-/* Посилюємо тіні */
-.main-content, .messages-wrapper {
-    box-shadow: 
-        0 4px 40px rgba(0, 0, 0, 0.1),
-        0 0 60px rgba(99, 102, 241, 0.3);
-}
-
 /* Анімація руху градієнта */
 @keyframes gradientMove {
     0% {
@@ -1017,13 +1068,8 @@ h1 {
     }
 }
 
-/* Застосовуємо анімацію градієнта */
-.main-content::before, .messages-wrapper::before {
-    background-size: 300% 300%;
-    animation: gradientMove 8s linear infinite;
-}
-
-/* Прибираємо всі before елементи зі світінням */
+/* ============= ВІДКЛЮЧЕНІ ЕФЕКТИ ============= */
+/* Прибираємо всі before елем��нти зі світінням */
 .main-content::before,
 .messages-wrapper::before {
     display: none;
@@ -1032,20 +1078,4 @@ h1 {
 /* Прибираємо всі анімації світіння */
 .ai-speaking::before {
     animation: none;
-}
-
-/* Базові стилі для кнопок без білого фону */
-.controls {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px 0;
-    background: none;
-    box-shadow: none;
-    border: none;
-}
-
-.controls::before,
-.controls::after {
-    display: none;
 }
