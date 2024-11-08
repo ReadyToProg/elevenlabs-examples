@@ -1,98 +1,292 @@
-// --- src/app.js ---
 import { Conversation } from '@11labs/client';
 
 let conversation = null;
+let messageHistory = [];
+const MAX_RECONNECT_ATTEMPTS = 3;
+let reconnectAttempts = 0;
 
-async function requestMicrophonePermission() {
-    try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        return true;
-    } catch (error) {
-        console.error('Microphone permission denied:', error);
-        return false;
+// Додамо змінну для відстеження стану
+let isIntentionalDisconnect = false;
+
+const MESSAGES = {
+    NEW_CONVERSATION: 'Розпочато нову розмову',
+    RECONNECTED: 'З\'єднання відновлено',
+    DISCONNECTED: 'Розмову завершено',
+    ERROR: 'Помилка: '
+};
+
+// Додаємо новий тип статусу
+const STATUS = {
+    DISCONNECTED: 'disconnected',
+    LISTENING: 'connected',
+    SPEAKING: 'speaking'
+};
+
+class ChatMessage {
+    constructor(content, role, timestamp) {
+        this.content = content;
+        this.role = role;
+        this.timestamp = timestamp || new Date().toISOString();
+    }
+
+    static fromJSON(json) {
+        return new ChatMessage(json.content, json.role, json.timestamp);
     }
 }
 
 async function getSignedUrl() {
     try {
         const response = await fetch('/api/signed-url');
-        if (!response.ok) throw new Error('Failed to get signed URL');
         const data = await response.json();
         return data.signedUrl;
     } catch (error) {
-        console.error('Error getting signed URL:', error);
+        console.error('Помилка отримання signed URL:', error);
         throw error;
     }
 }
 
-function updateStatus(isConnected) {
-    const statusElement = document.getElementById('connectionStatus');
-    statusElement.textContent = isConnected ? 'Connected' : 'Disconnected';
-    statusElement.classList.toggle('connected', isConnected);
+async function requestMicrophonePermission() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop());
+        return true;
+    } catch (error) {
+        console.error('Помилка доступу до мікрофона:', error);
+        return false;
+    }
 }
 
-function updateSpeakingStatus(mode) {
-    const statusElement = document.getElementById('speakingStatus');
-    // Update based on the exact mode string we receive
-    const isSpeaking = mode.mode === 'speaking';
-    statusElement.textContent = isSpeaking ? 'Agent Speaking' : 'Agent Silent';
-    statusElement.classList.toggle('speaking', isSpeaking);
-    console.log('Speaking status updated:', { mode, isSpeaking }); // Debug log
-}
-
-async function startConversation() {
-    const startButton = document.getElementById('startButton');
-    const endButton = document.getElementById('endButton');
+// Оновлюємо функцію оновлення статусу
+function updateStatus(status) {
+    const statusDot = document.querySelector('.status-dot');
+    const avatar = document.querySelector('.avatar');
     
+    // Спочатку видаляємо всі класи статусу
+    statusDot.classList.remove('connected', 'speaking');
+    avatar.classList.remove('speaking');
+    
+    switch(status) {
+        case STATUS.LISTENING:
+            statusDot.classList.add('connected');
+            break;
+        case STATUS.SPEAKING:
+            statusDot.classList.add('speaking');
+            avatar.classList.add('speaking');
+            break;
+        case STATUS.DISCONNECTED:
+        default:
+            // Червоний статус за замовчуванням
+            break;
+    }
+}
+
+function showSystemNotification(message) {
+    const messagesList = document.getElementById('messagesList');
+    const notificationDiv = document.createElement('div');
+    notificationDiv.className = 'system-notification';
+    notificationDiv.textContent = message;
+    messagesList.appendChild(notificationDiv);
+    messagesList.scrollTop = messagesList.scrollHeight;
+}
+
+function addMessage(content, role) {
+    const messagesList = document.getElementById('messagesList');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}`;
+    
+    const time = new Date().toLocaleTimeString();
+    
+    messageDiv.innerHTML = `
+        ${content}
+        <div class="message-time">${time}</div>
+    `;
+    
+    messagesList.appendChild(messageDiv);
+    messagesList.scrollTop = messagesList.scrollHeight;
+
+    // Зберігаємо повідомлення в історію
+    const chatMessage = new ChatMessage(content, role);
+    messageHistory.push(chatMessage);
+    saveHistoryToStorage();
+}
+
+function formatHistoryContext() {
+    return messageHistory
+        .map(msg => `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content}`)
+        .join('\n');
+}
+
+async function startConversation(isReconnect = false) {
     try {
         const hasPermission = await requestMicrophonePermission();
         if (!hasPermission) {
-            alert('Microphone permission is required for the conversation.');
+            alert('Потрібен дозвіл на використання мікрофона.');
             return;
         }
 
         const signedUrl = await getSignedUrl();
+        const initialContext = messageHistory.length > 0 ? formatHistoryContext() : '';
         
-        conversation = await Conversation.startSession({
+        const config = {
             signedUrl,
+            initialContext,
+            contextType: 'conversation_history',
+            audioConfig: {
+                sampleRate: 16000,
+                channelCount: 1
+            },
             onConnect: () => {
-                console.log('Connected');
-                updateStatus(true);
+                console.log('Connected to conversation');
+                updateStatus(STATUS.LISTENING);
                 startButton.disabled = true;
                 endButton.disabled = false;
+                showSystemNotification(isReconnect ? MESSAGES.RECONNECTED : MESSAGES.NEW_CONVERSATION);
             },
-            onDisconnect: () => {
-                console.log('Disconnected');
-                updateStatus(false);
+            onDisconnect: async () => {
+                console.log('Disconnect event received');
+                updateStatus(STATUS.DISCONNECTED);
                 startButton.disabled = false;
                 endButton.disabled = true;
-                updateSpeakingStatus({ mode: 'listening' }); // Reset to listening mode on disconnect
+                showSystemNotification(MESSAGES.DISCONNECTED);
+            },
+            onModeChange: (modeObj) => {
+                console.log('Mode changed:', modeObj);
+                
+                // Отримуємо значення mode з об'єкта
+                const mode = modeObj.mode;
+                
+                switch(mode) {
+                    case 'speaking':
+                        console.log('AI почав говорити');
+                        updateStatus(STATUS.SPEAKING);
+                        break;
+                    case 'listening':
+                        console.log('AI почав слухати');
+                        updateStatus(STATUS.LISTENING);
+                        break;
+                    default:
+                        console.log('Невідомий режим:', mode);
+                        break;
+                }
+            },
+            onMessage: (message) => {
+                if (message && message.source === 'ai' && message.message) {
+                    addMessage(message.message, 'assistant');
+                } else if (message && message.source === 'user' && message.message) {
+                    addMessage(message.message, 'user');
+                }
             },
             onError: (error) => {
                 console.error('Conversation error:', error);
-                alert('An error occurred during the conversation.');
-            },
-            onModeChange: (mode) => {
-                console.log('Mode changed:', mode); // Debug log to see exact mode object
-                updateSpeakingStatus(mode);
+                showSystemNotification(MESSAGES.ERROR + error.message);
             }
-        });
+        };
+
+        if (initialContext) {
+            console.log('Передаємо контекст при ' + 
+                (isReconnect ? 'перепідключенні' : 'новій розмові'), initialContext);
+        }
+        
+        conversation = await Conversation.startSession(config);
+        
     } catch (error) {
-        console.error('Error starting conversation:', error);
-        alert('Failed to start conversation. Please try again.');
+        console.error('Помилка при створенні розмови:', error);
+        showSystemNotification(MESSAGES.ERROR + error.message);
     }
 }
 
+// Оновлюємо функцію завершення розмови
 async function endConversation() {
     if (conversation) {
-        await conversation.endSession();
-        conversation = null;
+        try {
+            await conversation.endSession();
+            conversation = null;
+            
+            updateStatus(STATUS.DISCONNECTED);
+            const startButton = document.getElementById('startButton');
+            const endButton = document.getElementById('endButton');
+            startButton.disabled = false;
+            endButton.disabled = true;
+            
+            showSystemNotification(MESSAGES.DISCONNECTED);
+        } catch (error) {
+            console.error('Помилка при завершенні розмови:', error);
+            showSystemNotification(MESSAGES.ERROR + error.message);
+        }
     }
 }
 
-document.getElementById('startButton').addEventListener('click', startConversation);
-document.getElementById('endButton').addEventListener('click', endConversation);
+function saveHistoryToStorage() {
+    try {
+        localStorage.setItem('chatHistory', JSON.stringify(messageHistory));
+        console.log('Історію збережено в localStorage:', messageHistory.length, 'повідомлень');
+    } catch (error) {
+        console.error('Помилка при збереженні історії:', error);
+    }
+}
 
-window.addEventListener('error', function(event) {
-    console.error('Global error:', event.error);
+function loadHistoryFromStorage() {
+    try {
+        const saved = localStorage.getItem('chatHistory');
+        if (saved) {
+            const parsedHistory = JSON.parse(saved);
+            messageHistory = parsedHistory.map(msg => ChatMessage.fromJSON(msg));
+            console.log('Завантажено історію:', messageHistory.length, 'повідомлень');
+            
+            const messagesList = document.getElementById('messagesList');
+            messagesList.innerHTML = '';
+            
+            messageHistory.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.role}`;
+                
+                const time = new Date(msg.timestamp).toLocaleTimeString();
+                
+                messageDiv.innerHTML = `
+                    ${msg.content}
+                    <div class="message-time">${time}</div>
+                `;
+                
+                messagesList.appendChild(messageDiv);
+            });
+        } else {
+            console.log('Історію не знайдено в localStorage');
+        }
+    } catch (error) {
+        console.error('Помилка при завантаженні історії:', error);
+    }
+}
+
+function clearHistory() {
+    messageHistory = [];
+    localStorage.removeItem('chatHistory');
+    const messagesList = document.getElementById('messagesList');
+    messagesList.innerHTML = '';
+    showSystemNotification('Історію очищено');
+}
+
+function clearHistoryWithConfirmation() {
+    if (confirm('Ви впевнені, що хочете очистити всю історію розмови?')) {
+        clearHistory();
+    }
+}
+
+// Ініціалізація при завантаженні сторінки
+document.addEventListener('DOMContentLoaded', () => {
+    const startButton = document.getElementById('startButton');
+    const endButton = document.getElementById('endButton');
+    
+    startButton.addEventListener('click', () => startConversation());
+    endButton.addEventListener('click', async () => await endConversation());
+    
+    loadHistoryFromStorage();
 });
+
+// Додаємо функцію для тестування
+function debugHistory() {
+    console.group('Стан історії повідомлень');
+    console.log('Кількість повідомлень:', messageHistory.length);
+    console.log('Повідомлення:', messageHistory);
+    console.log('Розмір в localStorage:', new Blob([localStorage.getItem('chatHistory')]).size, 'байт');
+    console.groupEnd();
+}
