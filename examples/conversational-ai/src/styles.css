@@ -15,30 +15,32 @@ body {
 }
 
 .container {
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 30px;
-    background: none;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    gap: 30px !important;
+    background: none !important;
+    min-height: 100vh !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .main-content {
-    flex: 2;
-    margin: 0;
-    padding: 0;
-    background: none;
-    border-radius: 20px;
-    margin-bottom: 0;
-    display: flex;
-    flex-direction: column;
+    width: 800px !important;
+    height: 600px !important;
+    position: relative !important;
+    padding: 20px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .content-wrapper {
-    background: none;
-    padding: 0;
-    margin: 0;
-    position: relative;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .content-wrapper::before {
@@ -70,25 +72,24 @@ h1 {
 
 /* Аватар та анімації */
 .avatar-container {
-    position: relative;
-    width: calc(100% - 10px) !important;
-    height: 600px !important;
+    width: 100% !important;
+    height: 100% !important;
     background: #000;
-    border-radius: 20px;
-    overflow: hidden;
+    border-radius: 20px !important;
+    overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .avatar-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
 }
 
 .avatar-video.active {
@@ -170,16 +171,15 @@ h1 {
 
 /* Контейнер повідомлень */
 .messages-wrapper {
-    width: 400px;
-    height: 600px;
-    position: sticky;
-    top: 20px;
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+    width: 400px !important;
+    height: 600px !important;
+    position: relative !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 20px !important;
 }
 
 .messages-container {
@@ -993,7 +993,7 @@ h1 {
     }
 }
 
-/* Клас для активного стану (коли АІ говорить) */
+/* Клас для активого стану (коли АІ говорить) */
 .ai-speaking::before {
     animation: glow-pulse 2s ease-in-out infinite;
 }
@@ -1069,7 +1069,7 @@ h1 {
 }
 
 /* ============= ВІДКЛЮЧЕНІ ЕФЕКТИ ============= */
-/* Прибираємо всі before елем��нти зі світінням */
+/* Прибираємо всі before елемнти зі світінням */
 .main-content::before,
 .messages-wrapper::before {
     display: none;
@@ -1078,4 +1078,33 @@ h1 {
 /* Прибираємо всі анімації світіння */
 .ai-speaking::before {
     animation: none;
+}
+
+/* Прибираємо тінь під блоком */
+.main-content,
+.messages-wrapper,
+.content-wrapper {
+    box-shadow: none !important;
+    background: none !important;
+}
+
+/* Прибираємо всі можливі ефекти тіні та фону */
+.main-content::before,
+.main-content::after,
+.messages-wrapper::before,
+.messages-wrapper::after,
+.content-wrapper::before,
+.content-wrapper::after {
+    display: none !important;
+}
+
+/* Оновлюємо стилі для body, щоб забезпечити правильне центрування */
+body {
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
 }
