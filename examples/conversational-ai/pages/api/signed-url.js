@@ -1,27 +1,14 @@
 import fetch from 'node-fetch';
 
-export const config = {
-  runtime: 'edge', // це важливо для Vercel Edge Functions
-};
+export default async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-export default async function handler(req) {
-  // Логуємо запит
-  console.log('API Route triggered');
-
-  // Підготовка відповіді з CORS headers
-  const headers = {
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,OPTIONS,POST',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-
-  // Обробка OPTIONS запиту
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
-      status: 204,
-      headers 
-    });
+    return res.status(200).end();
   }
 
   try {
@@ -45,42 +32,13 @@ export default async function handler(req) {
     const data = await response.json();
 
     if (!response.ok) {
-      return new Response(
-        JSON.stringify({ error: data }), 
-        { 
-          status: response.status,
-          headers: {
-            'Content-Type': 'application/json',
-            ...headers
-          }
-        }
-      );
+      return res.status(response.status).json(data);
     }
 
-    return new Response(
-      JSON.stringify({ signedUrl: data.signed_url }), 
-      { 
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers
-        }
-      }
-    );
+    return res.status(200).json({ signedUrl: data.signed_url });
 
   } catch (error) {
     console.error('Server error:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message
-      }), 
-      { 
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers
-        }
-      }
-    );
+    return res.status(500).json({ error: error.message });
   }
 } 

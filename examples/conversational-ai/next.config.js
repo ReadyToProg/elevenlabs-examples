@@ -9,6 +9,11 @@ const nextConfig = {
       },
     ];
   },
+  webpack: (config, { isServer }) => {
+    // Додаємо підтримку .js файлів
+    config.resolve.extensions.push('.js');
+    return config;
+  }
 }
 
 module.exports = nextConfig 
