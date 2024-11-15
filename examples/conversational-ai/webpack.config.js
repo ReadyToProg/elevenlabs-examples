@@ -2,13 +2,14 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
+    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     entry: {
         bundle: ['./src/script.js', './src/app.js']
     },
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
+        clean: true
     },
     module: {
         rules: [
@@ -21,16 +22,6 @@ module.exports = {
             }
         ]
     },
-    devServer: {
-        static: {
-            directory: path.join(__dirname, 'dist'),
-        },
-        proxy: {
-            '/api': 'http://localhost:3030'
-        },
-        compress: true,
-        port: 8081,
-    },
     plugins: [
         new CopyPlugin({
             patterns: [
@@ -40,4 +31,10 @@ module.exports = {
             ],
         }),
     ],
+    performance: {
+        hints: process.env.NODE_ENV === 'production' ? "warning" : false
+    },
+    optimization: {
+        minimize: process.env.NODE_ENV === 'production'
+    }
 };
