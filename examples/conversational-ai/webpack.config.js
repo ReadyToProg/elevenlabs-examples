@@ -1,7 +1,11 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+import path from 'path';
+import { fileURLToPath } from 'url';
+import CopyPlugin from 'copy-webpack-plugin';
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     entry: {
         bundle: ['./src/script.js', './src/app.js']
@@ -22,6 +26,21 @@ module.exports = {
             }
         ]
     },
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
+        proxy: {
+            '/api': {
+                target: 'http://localhost:3030',
+                pathRewrite: { '^/api': '/api' },
+                changeOrigin: true
+            }
+        },
+        compress: true,
+        port: 8081,
+        hot: true
+    },
     plugins: [
         new CopyPlugin({
             patterns: [
@@ -30,11 +49,5 @@ module.exports = {
                 { from: 'public', to: 'public' },
             ],
         }),
-    ],
-    performance: {
-        hints: process.env.NODE_ENV === 'production' ? "warning" : false
-    },
-    optimization: {
-        minimize: process.env.NODE_ENV === 'production'
-    }
+    ]
 };

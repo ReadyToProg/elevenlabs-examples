@@ -43,8 +43,22 @@ class ChatMessage {
 
 async function getSignedUrl() {
     try {
-        const response = await fetch('/api/signed-url');
+        const response = await fetch('http://localhost:3030/api/signed-url', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        }
+        
         const data = await response.json();
+        console.log('Отримано signed URL:', data);
         return data.signedUrl;
     } catch (error) {
         console.error('Помилка отримання signed URL:', error);
@@ -160,7 +174,7 @@ async function startConversation(isReconnect = false) {
             onModeChange: (modeObj) => {
                 console.log('Mode changed:', modeObj);
                 
-                // Отримуємо значення mode з об'єкта
+                // Отримуємо значення mode з об'кта
                 const mode = modeObj.mode;
                 
                 switch(mode) {
@@ -295,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function debugHistory() {
     console.group('Стан історії повідомлень');
     console.log('Кількість повідомлень:', messageHistory.length);
-    console.log('Повідомлення:', messageHistory);
+    console.log('Поідомлення:', messageHistory);
     console.log('Розмір в localStorage:', new Blob([localStorage.getItem('chatHistory')]).size, 'байт');
     console.groupEnd();
 }
