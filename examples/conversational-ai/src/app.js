@@ -43,17 +43,15 @@ class ChatMessage {
 
 async function getSignedUrl() {
     try {
-        // Визначаємо, чи це продакшен середовище
         const isProduction = window.location.hostname !== 'localhost';
-        
-        // Формуємо URL залежно від середовища
         const baseUrl = isProduction 
-            ? '' // На продакшені використовуємо відносний шлях
-            : 'http://localhost:3030'; // Для локальної розробки
+            ? window.location.origin // Використовуємо поточний домен
+            : 'http://localhost:3030';
         
-        console.log('Using API URL:', `${baseUrl}/api/signed-url`);
+        const apiUrl = `${baseUrl}/api/signed-url`;
+        console.log('Calling API URL:', apiUrl);
 
-        const response = await fetch(`${baseUrl}/api/signed-url`, {
+        const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -64,11 +62,12 @@ async function getSignedUrl() {
         
         if (!response.ok) {
             const errorText = await response.text();
+            console.log('Error response:', errorText);
             throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
         }
         
         const data = await response.json();
-        console.log('Отримано signed URL:', data);
+        console.log('Success response:', data);
         return data.signedUrl;
     } catch (error) {
         console.error('Помилка отримання signed URL:', error);
