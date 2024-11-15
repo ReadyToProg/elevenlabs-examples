@@ -9,10 +9,10 @@ let reconnectAttempts = 0;
 let isIntentionalDisconnect = false;
 
 const MESSAGES = {
-    NEW_CONVERSATION: 'New Conversation Started',
-    RECONNECTED: 'Connection Reestablished',
-    DISCONNECTED: 'Conversation Ended',
-    ERROR: 'Error: '
+    NEW_CONVERSATION: 'Розпочато нову розмову',
+    RECONNECTED: 'З\'єднання відновлено',
+    DISCONNECTED: 'Розмову завершено',
+    ERROR: 'Помилка: '
 };
 
 // Додаємо новий тип статусу

@@ -1,8 +1,8 @@
 :root {
-    --brand-gradient-start: #2563eb;
-    --brand-gradient-end: #3b82f6;
-    --brand-primary: #2563eb;
-    --brand-secondary: #3b82f6;
+    --brand-gradient-start: #6366f1;
+    --brand-gradient-end: #8b5cf6;
+    --brand-primary: #6366f1;
+    --brand-secondary: #8b5cf6;
     --glow-size: 20px;
 }
 
@@ -10,7 +10,7 @@ body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 20px;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
 }
 
@@ -230,7 +230,7 @@ h1 {
 }
 
 .message.user {
-    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     color: white;
     margin-left: 15%;
     border-bottom-right-radius: 4px;
@@ -239,7 +239,7 @@ h1 {
 .message.assistant {
     background: white;
     color: #2c3e50;
-    border: 1px solid rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.1);
     margin-right: 15%;
     border-bottom-left-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -288,7 +288,7 @@ h1 {
 }
 
 .control-button.start {
-    background: #2563eb !important;
+    background: #6366f1 !important;
     color: white !important;
 }
 
@@ -298,7 +298,7 @@ h1 {
 }
 
 .control-button.start:hover:not(:disabled) {
-    background: #1d4ed8 !important;
+    background: #4f46e5 !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3) !important;
 }
@@ -551,8 +551,6 @@ h1 {
     width: 100%;
     margin: 0;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.98);
-    border: 1px solid rgba(37, 99, 235, 0.1);
 }
 
 .product-content {
@@ -584,7 +582,7 @@ h1 {
 
 .product-description {
     font-size: 0.9em;
-    color: #2563eb;
+    color: #6366F1;
     font-weight: 500;
     margin: 0;
 }
@@ -1119,100 +1117,5 @@ body {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
-}
-
-/* Стилі для списку можливостей */
-.feature-list {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.feature-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9em;
-    color: #4b5563;
-}
-
-.feature-item i {
-    color: #2563eb;
-    font-size: 1em;
-}
-
-/* Стилі для статусу розробки */
-.development-status {
-    margin-top: 25px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(37, 99, 235, 0.1);
-}
-
-.status-text {
-    font-size: 0.85em;
-    font-weight: 600;
-    color: #4b5563;
-    margin-bottom: 10px;
-}
-
-.status-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.status-item {
-    font-size: 0.8em;
-    padding: 4px 12px;
-    border-radius: 12px;
-    background: rgba(37, 99, 235, 0.1);
-}
-
-.status-item.complete {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
-}
-
-.status-item.pending {
-    background: rgba(245, 158, 11, 0.1);
-    color: #d97706;
-}
-
-/* Оновлений стиль для product-info */
-.product-info {
-    margin-bottom: 15px;
-}
-
-.product-tagline {
-    font-size: 0.9em;
-    font-weight: 600;
-    color: #2563eb;
-}
-
-.product-description {
-    font-size: 0.85em;
-    color: #6b7280;
-    margin-top: 5px;
-}
-
-/* Адаптивність для мобільних пристроїв */
-@media (max-width: 768px) {
-    .feature-list {
-        margin-top: 15px;
-        gap: 8px;
-    }
-
-    .feature-item {
-        font-size: 0.8em;
-    }
-
-    .development-status {
-        margin-top: 20px;
-    }
-
-    .status-items {
-        flex-direction: column;
-    }
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
 }
