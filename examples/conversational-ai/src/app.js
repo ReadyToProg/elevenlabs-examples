@@ -43,15 +43,7 @@ class ChatMessage {
 
 async function getSignedUrl() {
     try {
-        const isProduction = window.location.hostname !== 'localhost';
-        const baseUrl = isProduction 
-            ? '' // використовуємо відносний шлях
-            : 'http://localhost:3000';
-        
-        const apiUrl = `${baseUrl}/api/signed-url`;
-        console.log('Calling API URL:', apiUrl);
-
-        const response = await fetch(apiUrl, {
+        const response = await fetch('/api/signed-url', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -64,11 +56,11 @@ async function getSignedUrl() {
         
         if (contentType && contentType.includes('application/json')) {
             const data = await response.json();
-            errorText = JSON.stringify(data);
             if (response.ok) {
                 console.log('Success response:', data);
                 return data.signedUrl;
             }
+            errorText = JSON.stringify(data);
         } else {
             errorText = await response.text();
         }
@@ -286,7 +278,7 @@ function loadHistoryFromStorage() {
                 messagesList.appendChild(messageDiv);
             });
         } else {
-            console.log('��сторію не знайдено в localStorage');
+            console.log('сторію не знайдено в localStorage');
         }
     } catch (error) {
         console.error('Помилка при завантаженні історії:', error);

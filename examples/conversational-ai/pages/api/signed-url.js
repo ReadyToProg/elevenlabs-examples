@@ -1,51 +1,86 @@
 import fetch from 'node-fetch';
 
-export default async function handler(req, res) {
-    // Налаштовуємо CORS
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+export const config = {
+  runtime: 'edge', // це важливо для Vercel Edge Functions
+};
 
-    console.log('API Route викликано');
+export default async function handler(req) {
+  // Логуємо запит
+  console.log('API Route triggered');
 
-    // Опрацьовуємо OPTIONS запит
-    if (req.method === 'OPTIONS') {
-        return res.status(200).json({});
+  // Підготовка відповіді з CORS headers
+  const headers = {
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,OPTIONS,POST',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+
+  // Обробка OPTIONS запиту
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { 
+      status: 204,
+      headers 
+    });
+  }
+
+  try {
+    const XI_API_KEY = process.env.XI_API_KEY;
+    const AGENT_ID = process.env.AGENT_ID;
+
+    if (!XI_API_KEY || !AGENT_ID) {
+      throw new Error('Missing required environment variables');
     }
 
-    try {
-        console.log('Перевірка змінних середовища:', {
-            hasApiKey: !!process.env.XI_API_KEY,
-            hasAgentId: !!process.env.AGENT_ID
-        });
-
-        if (!process.env.XI_API_KEY || !process.env.AGENT_ID) {
-            throw new Error('Missing API key or Agent ID');
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${AGENT_ID}`,
+      {
+        method: 'GET',
+        headers: {
+          'xi-api-key': XI_API_KEY,
         }
+      }
+    );
 
-        const url = `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${process.env.AGENT_ID}`;
-        console.log('Sending request to:', url);
+    const data = await response.json();
 
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'xi-api-key': process.env.XI_API_KEY,
-            }
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('ElevenLabs API error:', errorText);
-            throw new Error(`API responded with status ${response.status}: ${errorText}`);
+    if (!response.ok) {
+      return new Response(
+        JSON.stringify({ error: data }), 
+        { 
+          status: response.status,
+          headers: {
+            'Content-Type': 'application/json',
+            ...headers
+          }
         }
-
-        const data = await response.json();
-        console.log('Success response:', data);
-        return res.json({ signedUrl: data.signed_url });
-        
-    } catch (error) {
-        console.error('Server error:', error);
-        return res.status(500).json({ error: error.message });
+      );
     }
+
+    return new Response(
+      JSON.stringify({ signedUrl: data.signed_url }), 
+      { 
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers
+        }
+      }
+    );
+
+  } catch (error) {
+    console.error('Server error:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: error.message
+      }), 
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers
+        }
+      }
+    );
+  }
 } 
