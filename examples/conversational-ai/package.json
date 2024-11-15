@@ -8,7 +8,8 @@
     "start:frontend": "webpack serve --port 8081",
     "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "build": "webpack --mode production",
-    "vercel-build": "webpack --mode production"
+    "vercel-build": "npm run build",
+    "vercel-dev": "vercel dev"
   },
   "dependencies": {
     "@11labs/client": "^0.0.1",

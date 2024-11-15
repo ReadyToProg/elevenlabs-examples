@@ -45,8 +45,8 @@ async function getSignedUrl() {
     try {
         const isProduction = window.location.hostname !== 'localhost';
         const baseUrl = isProduction 
-            ? window.location.origin // Використовуємо поточний домен
-            : 'http://localhost:3030';
+            ? '' // використовуємо відносний шлях
+            : 'http://localhost:3000';
         
         const apiUrl = `${baseUrl}/api/signed-url`;
         console.log('Calling API URL:', apiUrl);
@@ -56,19 +56,24 @@ async function getSignedUrl() {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            credentials: isProduction ? 'same-origin' : 'include'
+            }
         });
         
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.log('Error response:', errorText);
-            throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        const contentType = response.headers.get('content-type');
+        let errorText;
+        
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            errorText = JSON.stringify(data);
+            if (response.ok) {
+                console.log('Success response:', data);
+                return data.signedUrl;
+            }
+        } else {
+            errorText = await response.text();
         }
         
-        const data = await response.json();
-        console.log('Success response:', data);
-        return data.signedUrl;
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     } catch (error) {
         console.error('Помилка отримання signed URL:', error);
         throw error;
@@ -281,7 +286,7 @@ function loadHistoryFromStorage() {
                 messagesList.appendChild(messageDiv);
             });
         } else {
-            console.log('Історію не знайдено в localStorage');
+            console.log('��сторію не знайдено в localStorage');
         }
     } catch (error) {
         console.error('Помилка при завантаженні історії:', error);
